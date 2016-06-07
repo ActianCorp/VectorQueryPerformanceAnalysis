@@ -4,7 +4,7 @@
 #
 # Program Ownership and Restrictions.
 #
-# This Program (Shell Script) provided hereunder is licensed, not sold, and all
+# This Program/Script provided hereunder is licensed, not sold, and all
 # intellectual property rights and title to the Program shall remain with Actian
 # and Our suppliers and no interest or ownership therein is conveyed to you.
 #
@@ -36,8 +36,11 @@
 #   analyse_vector_log.sh
 #
 # Description:
-#   This script analyses the contents of Vector log files
-#   (for the avoidance of doubt, that is vectorwise.log rather than LOG).
+#   This script analyses the contents of the main Actian Vector log file,
+#   vectorwise.log, for data related to query performance. This data is extracted,
+#   summarised and loaded into database tables in the specified database.
+#   These tables are dropped and re-created every time this program is executed.
+#   A CSV file summarising the data is also produced, and placed in the temp folder.
 #
 #----------------------------------------------------------------------------
 h_prog_name=`basename ${0}`
@@ -426,7 +429,6 @@ LOAD_ANALYSIS_DATA()
 PRODUCE_SUMMARY()
 {
   echo "
-
       DROP TABLE IF EXISTS queries;
       \p\g\t
 
@@ -617,6 +619,9 @@ PRINT_USAGE()
     printf "%s\n" ""
     printf "%s\n" "  $h_prog_name --help"
     printf "%s\n" "  $h_prog_name --version"
+    printf "\n%s\n" "Output data is written to database tables named queries and query_summary"
+    printf "%s\n" "In addition, a summarising CSV file is written to the temporary directory, and is"
+    printf "%s\n" "called $h_csv_summary."
 }
 
 
@@ -810,6 +815,8 @@ then
 
     PRODUCE_SUMMARY
     echo Completed summarising queries - please review summarise_queries.log for details, or check
+    echo $h_csv_summary for a summary of query data. 
+    echo Raw query data is stored in tables 'queries' and 'queries_summary' in database $h_clv_logdb.
 else
     # Clean up all files we produced if everything went fine.
     # Assume we don't want to keep the files around.

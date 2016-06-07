@@ -4,7 +4,7 @@
 #
 # Program Ownership and Restrictions.
 #
-# This Program (Awk Script) provided hereunder is licensed, not sold, and all
+# This Program/Script provided hereunder is licensed, not sold, and all
 # intellectual property rights and title to the Program shall remain with Actian
 # and Our suppliers and no interest or ownership therein is conveyed to you.
 #
@@ -36,8 +36,10 @@
 #   parse_vector_log.awk 
 #
 # Description:
-#   This script pasrses the contents of Vector log files
-#   (for the avoidance of doubt, that is vectorwise.log rather than LOG).
+#   This script parses the contents of the main Actian Vector log file
+#   vectorwise.log to extract data related to query execution performance.
+#	It outputs that filtered data into a CSV file for subsequent loading into a 
+#	database for analysis.
 #
 #----------------------------------------------------------------------------
 
@@ -363,14 +365,9 @@ BEGIN {
             gsub( ")", "", h_awk_running_time )
             gsub( "s", "", h_awk_running_time )
             gsub( ",", "", h_awk_running_time )
-
-#           FS="="
-#           h_awk_split_count = split( ha_awk_input_line[15], ha_awk_split_word )
-
-#           h_awk_query_id = ha_awk_split_word[2]
         }
 
-        # None transaction query
+        # Non-transaction query
         if ( h_awk_index = 0 ) {
 
             h_awk_noof_rows = ha_awk_input_line[10]
@@ -379,11 +376,6 @@ BEGIN {
             gsub( ")", "", h_awk_running_time )
             gsub( "s", "", h_awk_running_time )
             gsub( ",", "", h_awk_running_time )
-
-#           FS="="
-#           h_awk_split_count = split( ha_awk_input_line[14], ha_awk_split_word )
-
-#           h_awk_query_id = ha_awk_split_word[2]
         }
 
         h_qry_index = index( h_awk_input_line, "query_id=" )
@@ -406,8 +398,7 @@ BEGIN {
         next
     }
 
-
-next
+	next
 }
 
 
