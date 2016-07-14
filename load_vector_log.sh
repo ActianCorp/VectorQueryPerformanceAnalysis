@@ -239,7 +239,7 @@ function PRINT_USAGE()
     printf "%s\n" "   --system              {II_SYSTEM}. Defaults to local value of \$II_SYSTEM"
     printf "%s\n" "   --debug               If supplied, turns debug on. Defaults to off."
     printf "%s\n" "   --tmp_dir             {temporary directory}. Defaults to \$TEMP."
-    printf "%s\n" "   --log_db              {database} to load analysis data into. Defaults to imadb."
+    printf "%s\n" "   --log_db              {database} to load analysis data into. Mandatory."
     printf "%s\n" "   --refresh             If supplied, clear the database and start from scratch."
 
     printf "%s\n" ""
@@ -260,7 +260,6 @@ CLF_MESSAGELOG Program Name: $h_prog_name Starting
 # Set the various defaults (which may be overriden by the parameters).
 
 h_clv_ii_system=$II_SYSTEM
-h_clv_logdb=imadb
 h_clv_refresh=0
 h_clv_debug=N
 
@@ -335,6 +334,13 @@ fi
 if [ ! -d "$h_clv_ii_system" ]
 then
     CLF_MESSAGELOG "II_SYSTEM value $h_clv_ii_system is not a directory."
+    exit 1
+fi
+
+if [ -z "$h_clv_logdb" ]
+then
+    CLF_MESSAGELOG "Analysis log database not supplied."
+    PRINT_USAGE
     exit 1
 fi
 
