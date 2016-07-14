@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2014 Actian Corporation
+# Copyright 2016 Actian Corporation
 #
 # Program Ownership and Restrictions.
 #
@@ -33,13 +33,15 @@
 #----------------------------------------------------------------------------
 #
 # Name:
+#
 #   parse_vector_log.awk 
 #
 # Description:
-#   This script parses the contents of the main Actian Vector log file
-#   vectorwise.log to extract data related to query execution performance.
-#	It outputs that filtered data into a CSV file for subsequent loading into a 
-#	database for analysis.
+#
+#   This script parses the contents of the main Vector log file vectorwise.log
+#   to extract data related to query execution performance.
+#   It outputs that filtered data into a CSV file for subsequent loading into  
+#   a database for analysis.
 #
 #----------------------------------------------------------------------------
 
@@ -128,6 +130,18 @@ BEGIN {
     #----------------------------------------------------------------------------
 
     h_awk_log_timestamp =  h_awk_log_record_day "-" h_awk_log_record_month_name "-" h_awk_log_record_year " " h_awk_log_record_hour ":" h_awk_log_record_min ":" h_awk_log_record_sec "." h_awk_log_record_ms
+
+    #----------------------------------------------------------------------------
+    # Ignore entries older than the last run date/time.                           
+    #----------------------------------------------------------------------------
+
+    h_awk_log_datetime =  h_awk_log_record_year h_awk_log_record_month h_awk_log_record_day h_awk_log_record_hour h_awk_log_record_min h_awk_log_record_sec "." h_awk_log_record_ms
+
+#    printf ("Log Date/time : " h_awk_log_datetime ", Last Date/Time : " h_awk_lastrun_timestamp "\n")
+
+    if ( h_awk_log_datetime <= h_awk_lastrun_timestamp ) {
+        next
+    }
 
     #----------------------------------------------------------------------------
     #    Pull out the PID
@@ -334,7 +348,7 @@ BEGIN {
         # TODO: re-address this to be able to load queries of arbitrary size.
         #----------------------------------------------------------------------------
 
-        printf ( h_awk_log_timestamp  "\t" NR "\t" h_awk_pid "\t" h_awk_tid "\t" h_awk_sid "\t" "unknown" "\t" h_awk_query "\t" h_awk_query_id "\t" h_awk_query_truncated "\t" h_awk_query_type_id "\n" ) >> h_awk_csv_query_received
+        printf ( h_awk_log_timestamp  "\t" NR "\t" h_awk_pid "\t" h_awk_tid "\t" h_awk_sid "\t" "unknown" "\t" h_awk_query_id "\t" h_awk_query_truncated "\t" h_awk_query_type_id "\n" ) >> h_awk_csv_query_received
 
         next
     }
@@ -410,6 +424,7 @@ END {
     }
 }
 
+
 #------------------------------------------------------------------------------
-# End of script
+# End of awk script
 #------------------------------------------------------------------------------

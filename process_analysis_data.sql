@@ -29,23 +29,96 @@
 -- parties.
 --
 
---------------------------------------------------------------------------------
--- SQL Script to drop all tables created and used by the analysis process.
---------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+-- SQL Script to process the vectorwise.log data extracted this run and merge
+-- into the historic query data for later analysis.         
+------------------------------------------------------------------------------
 
 \nocontinue
 
-SET AUTOCOMMIT ON;
+SET SESSION WITH ON_ERROR = ROLLBACK TRANSACTION;
+\p\g\t
 
-DROP TABLE IF EXISTS vqat_queries;
-DROP TABLE IF EXISTS vqat_last_load;
-DROP TABLE IF EXISTS vqat_last_analysis;
-DROP TABLE IF EXISTS vqat_queries_temp;
-DROP TABLE IF EXISTS vqat_queries_summary;
-DROP TABLE IF EXISTS vqat_x100_process_starting;
-DROP TABLE IF EXISTS vqat_query_received;
-DROP TABLE IF EXISTS vqat_query_finished;
+SET AUTOCOMMIT OFF;
+\p\g\t
 
+INSERT INTO 
+    vqat_queries_temp
+SELECT
+    x1.log_timestamp,
+    x1.process_id,
+    x1.thread_id,
+    x1.session_id,
+    x1.database_name,
+    x1.query_id,
+    -1,
+    -1,
+    'N'
+FROM
+    vqat_query_received x1
+WHERE
+    query_type_id = 0
+;
+\p\g\t
+
+
+UPDATE 
+    vqat_queries_temp x1
+FROM
+    vqat_x100_process_starting x2
+SET
+    database_name = x2.database_name
+WHERE
+    x1.process_id = x2.process_id
+;
+\p\g\t
+
+
+UPDATE 
+    vqat_queries_temp x1
+FROM
+    vqat_query_finished x2
+SET
+    noof_rows     = x2.noof_rows,
+    running_time  = x2.running_time
+WHERE
+    x1.process_id = x2.process_id
+AND x1.thread_id  = x2.thread_id
+AND x1.session_id = x2.session_id
+AND x1.query_id   = x2.query_id
+;
+\p\g\t
+
+DELETE FROM
+    vqat_queries
+WHERE
+    noof_rows    = -1
+OR  running_time = -1 
+;
+\p\g\t
+
+MODIFY 
+    vqat_queries 
+UNION 
+    vqat_queries_temp TO COMBINE
+;
+\p\g\t
+
+UPDATE
+    vqat_last_load
+SET
+    lastrun_timestamp = (SELECT 
+                             MAX(log_timestamp)
+                         FROM
+                             vqat_query_finished)
+WHERE
+    (SELECT COUNT(*) FROM vqat_query_finished) > 0
+;
+\p\g\t
+
+
+COMMIT;
+;
 \p\g\t
 
 
