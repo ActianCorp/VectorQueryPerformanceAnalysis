@@ -48,7 +48,7 @@ CREATE TABLE vqat_queries (
     running_time                   DECIMAL(20,6) NOT NULL NOT DEFAULT,
     transaction_aborted            CHAR(1)       NOT NULL WITH DEFAULT
     )
-WITH STRUCTURE = VECTORWISE
+WITH STRUCTURE = VECTORWISE, NOPARTITION
 ;
 \p\g\t
 
@@ -59,7 +59,7 @@ GRANT ALL ON vqat_queries TO PUBLIC;
 CREATE TABLE vqat_last_load (
     lastrun_timestamp              TIMESTAMP     NOT NULL WITH DEFAULT
     )
-WITH STRUCTURE = VECTORWISE
+WITH STRUCTURE = VECTORWISE, NOPARTITION
 ;
 \p\g\t
 
@@ -74,7 +74,7 @@ GRANT ALL ON vqat_last_load TO PUBLIC;
 CREATE TABLE vqat_last_analysis (
     lastrun_timestamp              TIMESTAMP     NOT NULL WITH DEFAULT
     )
-WITH STRUCTURE = VECTORWISE
+WITH STRUCTURE = VECTORWISE, NOPARTITION
 ;
 \p\g\t
 
@@ -93,7 +93,7 @@ CREATE TABLE vqat_x100_process_starting (
     thread_id           INTEGER8    NOT NULL NOT DEFAULT,
     database_name       VARCHAR(32) NOT NULL NOT DEFAULT
     )
-WITH STRUCTURE = VECTORWISE
+WITH STRUCTURE = VECTORWISE, NOPARTITION
 ;
 \p\g\t
 

@@ -64,7 +64,7 @@ CREATE TABLE vqat_query_received (
     query_truncated     CHAR(1)        NOT NULL NOT DEFAULT,
     query_type_id       INTEGER2       NOT NULL NOT DEFAULT
     )
-WITH STRUCTURE = VECTORWISE
+WITH STRUCTURE = VECTORWISE, NOPARTITION
 ;
 \p\g\t
 
@@ -85,7 +85,7 @@ CREATE TABLE vqat_query_finished (
     query_id            INTEGER8      NOT NULL NOT DEFAULT,
     noof_rows           INTEGER8      NOT NULL NOT DEFAULT
     )
-WITH STRUCTURE = VECTORWISE
+WITH STRUCTURE = VECTORWISE, NOPARTITION
 ;
 \p\g\t
 
@@ -106,7 +106,7 @@ CREATE TABLE vqat_queries_temp (
     running_time                   DECIMAL(20,6) NOT NULL NOT DEFAULT,
     transaction_aborted            CHAR(1)       NOT NULL WITH DEFAULT
     )
-WITH STRUCTURE = VECTORWISE
+WITH STRUCTURE = VECTORWISE, NOPARTITION
 ;
 \p\g\t
 
