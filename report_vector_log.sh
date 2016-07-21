@@ -159,6 +159,7 @@ function VECTOR_LOG_REPORT()
         ORDER BY 
             database,
             period
+        WITH NOPARTITION
         ;
         \p\g\t
 
