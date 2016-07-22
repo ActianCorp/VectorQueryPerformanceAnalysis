@@ -90,7 +90,7 @@ AND x1.query_id   = x2.query_id
 \p\g\t
 
 DELETE FROM
-    vqat_queries
+    vqat_queries_temp
 WHERE
     noof_rows    = -1
 OR  running_time = -1 
