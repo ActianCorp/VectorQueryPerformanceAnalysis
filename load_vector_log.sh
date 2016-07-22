@@ -86,7 +86,7 @@ function CREATE_LOG_SCHEMA()
 
     # Check the supplied database exists and is accessible.
 
-    ERRORS=`echo "create table log_test (col1 int);drop table log_test\g" | sql $h_clv_logdb | grep "E_" | wc -l`
+    ERRORS=`echo "create table log_test (col1 int) WITH NOPARTITION;drop table log_test\g" | sql $h_clv_logdb | grep "E_" | wc -l`
 
     if [ "$ERRORS" -gt 0 ]
     then
